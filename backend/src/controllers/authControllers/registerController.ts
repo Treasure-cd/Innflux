@@ -5,7 +5,8 @@ import { FieldValidators, isString, minLength, isValidUsername, validate } from 
 import { hashPassword } from "../../utils/passwordHash.js";
 
 interface AuthHotel {
-  sub: string;
+  hotelId: number;
+  type: "onboarding";
 }
 
 export const createUser = async(req: Request, res: Response, next: NextFunction) => {
@@ -19,9 +20,23 @@ if (!req.body || Object.keys(req.body).length === 0) {
    const username = req.body.username?.trim();
    const password = req.body.password?.trim();
 
-   const { sub: hotelId } = req.user as AuthHotel;
+   const { hotelId } = req.user as AuthHotel;
 
-  const hotel = await prisma.hotel.findUnique({
+  const data = {
+    username,
+    password, 
+  }
+
+  const createUserValidators: FieldValidators = {
+    username: [isString, minLength(6), isValidUsername],
+    password: [isString, minLength(8)],
+  };
+
+  const errors = validate(data, createUserValidators);
+
+  if (errors) return next(createError("Validation error", 400, errors));
+
+    const hotel = await prisma.hotel.findUnique({
     where: {
       id: hotelId,
     },
@@ -42,26 +57,12 @@ if (!req.body || Object.keys(req.body).length === 0) {
     return next(createError("Owner already exists", 400));
   }
 
-  const data = {
-    username,
-    password, 
-  }
-
-  const createUserValidators: FieldValidators = {
-    username: [isString, minLength(6), isValidUsername],
-    password: [isString, minLength(8)],
-  };
-
-  const errors = validate(data, createUserValidators);
-
-  if (errors) return next(createError("Validation error", 400, errors));
-
   const passwordHash = await hashPassword(password);
 
   const user = await prisma.auth.create({
   data: { hotelId, username, passwordHash, role: "owner" }
 })
-
+  const { passwordHash: _, ...safeUser } = user;
   res.status(201).json({
     success: true,
     user,

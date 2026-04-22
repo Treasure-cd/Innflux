@@ -19,10 +19,7 @@ export const minLength = (min: number): Validator => (v) =>
     : `must be at least ${min} characters`;
 
 export const isValidTimezone: Validator = (v) =>
-  typeof v === "string" &&
-  Intl.supportedValuesOf("timeZone").includes(v)
-    ? null
-    : "Invalid timezone";
+  typeof v === "string" ? null : "Invalid timezone";
 
 
     
