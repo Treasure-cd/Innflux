@@ -65,6 +65,6 @@ if (!req.body || Object.keys(req.body).length === 0) {
   const { passwordHash: _, ...safeUser } = user;
   res.status(201).json({
     success: true,
-    user,
+    user: safeUser,
   })
 }

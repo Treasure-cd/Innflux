@@ -21,6 +21,18 @@ export const minLength = (min: number): Validator => (v) =>
 export const isValidTimezone: Validator = (v) =>
   typeof v === "string" ? null : "Invalid timezone";
 
+export const isNumber: Validator = (v) =>
+  typeof v === "number" && !isNaN(v) ? null : "must be a number";
+
+export const isCloudinaryUrl: Validator = (v) =>
+  typeof v === "string" && v.includes("res.cloudinary.com") && v.includes("https") ?
+  null:
+  "Invalid Cloudinary URL"
+
+export const optional = (validatorFn: Validator): Validator => (value) => {
+  if (value === undefined || value === null || value === "") return null;
+  return validatorFn(value);
+};
 
     
 export function validate(

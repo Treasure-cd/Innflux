@@ -40,7 +40,7 @@ export const getUserByIdentifier = async(req: Request, res: Response, next: Next
     { 
         id: user.id,
         userRole: user.role,
-        hotel: user.hotelId,
+        hotelId: user.hotelId,
         type: "auth",
      },
     process.env.SECRET_KEY,

@@ -1,14 +1,14 @@
-datasource db {
-  provider = "sqlite"
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "sqlite"
+}
+
 model Auth {
   id           Int      @id @default(autoincrement())
-  hotelId      Int      @unique
+  hotelId      Int
   username     String   @unique
   passwordHash String
   role         String   @default("owner")
@@ -18,57 +18,55 @@ model Auth {
 }
 
 model Hotel {
-  id               Int      @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   name             String
   address          String
   email            String?
   phone            String?
-  logo             String? 
-  numberOfRooms    Int      @default(0)
-  subscriptionPlan String   @default("free")
-  timezone         String   @default("Africa/Lagos")
-  isActive         Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  logo             String?
+  numberOfRooms    Int       @default(0)
+  subscriptionPlan String    @default("free")
+  timezone         String    @default("Africa/Lagos")
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  auth             Auth?
-  rooms            Room[]
+  auth             Auth[]
   bookings         Booking[]
+  rooms            Room[]
 }
 
 model Room {
-  id          Int      @id @default(autoincrement())
-  hotelId     Int     
-  alias       String   
-  specialName String? 
+  id          Int       @id @default(autoincrement())
+  hotelId     Int
+  alias       String
+  specialName String?
   description String?
-  roomType    String   @default("single")  
-  quality     String   @default("standard") 
+  roomType    String    @default("single")
+  quality     String    @default("standard")
   floor       Int?
-  price       Int 
-  isAvailable Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  hotel       Hotel    @relation(fields: [hotelId], references: [id])
+  price       Int
+  isAvailable Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   bookings    Booking[]
+  hotel       Hotel     @relation(fields: [hotelId], references: [id])
 }
 
 model Booking {
   id            Int      @id @default(autoincrement())
-  hotelId       Int      
-  roomId        Int    
+  hotelId       Int
+  roomId        Int
   customerName  String
   customerEmail String?
   customerPhone String
-  roomPrice     Int     
+  roomPrice     Int
   checkInDate   DateTime
   checkOutDate  DateTime
   paymentStatus String   @default("pending")
   bookingSource String   @default("walk-in")
   notes         String?
   createdAt     DateTime @default(now())
-
-  hotel         Hotel    @relation(fields: [hotelId], references: [id])
   room          Room     @relation(fields: [roomId], references: [id])
+  hotel         Hotel    @relation(fields: [hotelId], references: [id])
 }

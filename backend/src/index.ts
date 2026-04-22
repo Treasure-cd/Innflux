@@ -1,5 +1,7 @@
+import "dotenv/config";
 import express, { Request, Response } from 'express';
 import authRouter from './routes/authRoutes.js';
+import hotelRouter from './routes/hotelRoutes.js';
 import logger from './middleware/logger.js';
 import errorHandler from './middleware/errorHandler.js';
 
@@ -8,6 +10,8 @@ app.use(express.json());
 
 app.use(logger);
 app.use("/api/auth", authRouter);
+app.use("/api/hotel", hotelRouter)
+
 app.use(errorHandler)
 
 

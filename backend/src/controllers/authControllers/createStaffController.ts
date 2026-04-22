@@ -4,7 +4,7 @@ import { prisma } from "../../lib/prisma.js";
 import { FieldValidators, isString, isValidUsername, minLength, validate } from "../../utils/validateFields.js";
 import { hashPassword } from "../../utils/passwordHash.js";
 
-interface AuthUser {
+export interface AuthUser {
   id: number;
   userRole: string,
   hotelId: number,
@@ -59,6 +59,6 @@ export const createStaff = async(req: Request, res: Response, next: NextFunction
   const { passwordHash: _, ...safeUser } = user;
   res.status(201).json({
     success: true,
-    user,
+    user: safeUser,
   })
 }
